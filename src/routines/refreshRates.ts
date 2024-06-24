@@ -1,6 +1,7 @@
 import "dotenv/config";
 import fetch, { Headers } from "node-fetch";
 import { generateRefreshFile } from "../utils/generateRefreshFile";
+import { uploadFile } from "../utils/uploadFile";
 
 type SuccessResponse = {
   quotation: number
@@ -43,6 +44,7 @@ async function refreshRates() {
 
   const data = await res.json() as SuccessResponse
   const d = ["USD", "BRL", data.quotation.toFixed(2)]
-  generateRefreshFile("ECTPFX", d);
+  const fileName = generateRefreshFile("ECTPFX", d);
+  uploadFile(fileName, "Rates")
 }
 refreshRates();

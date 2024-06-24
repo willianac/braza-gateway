@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "dev": "node --watch --loader=tsx src/server.ts",
     "build": "tsup src --format esm"
@@ -11,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "basic-ftp": "^5.0.5",
     "dotenv": "^16.4.5",
     "fastify": "^4.28.0",
     "node-fetch": "^3.3.2"
