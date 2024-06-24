@@ -50,3 +50,7 @@ async function refreshRates() {
   fs.rm(fileName + ".txt", err => {if(err) console.log(err)})
 }
 refreshRates();
+
+setInterval(() => {
+	refreshRates()
+}, 1000 * 60 * 15);
