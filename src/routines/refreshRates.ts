@@ -19,6 +19,8 @@ type ErrorResponse = {
   }[]
 }
 
+const MARKUP_VALUES = ["2", "1", "0"]
+
 async function refreshRates() {
   const headers = new Headers()
   headers.append("x-api-key", process.env.API_KEY as string)
@@ -26,26 +28,27 @@ async function refreshRates() {
   headers.append("x-account-number", process.env.ACCOUNT_NUMBER as string)
   headers.append("Accept", "application/json")
 
-  const params = new URLSearchParams({
-    markup_type: "C",
-    markup_value: "0",
-    pair: "USDTBRL"
-  })
+  let fileData: string[][] = [];
+  for(let value of MARKUP_VALUES) {
+    const params = new URLSearchParams({
+      markup_type: "P",
+      markup_value: value,
+      pair: "USDTBRL"
+    })
+    const res = await fetch(process.env.BRAZA_URL + `quote?${params}`, {
+      method: "GET",
+      headers,
+    })
 
-  const res = await fetch(process.env.BRAZA_URL + `quote?${params}`, {
-    method: "GET",
-    headers,
-    
-  })
-
-  if(!res.ok) {
-    const errorData = await res.json() as ErrorResponse
-    return
+    if(!res.ok) {
+      const errorData = await res.json() as ErrorResponse
+      return
+    }
+    const data = await res.json() as SuccessResponse
+    fileData.push(["USD", "BRL", data.quotation.toFixed(2)])
   }
 
-  const data = await res.json() as SuccessResponse
-  const d = ["USD", "BRL", data.quotation.toFixed(2)]
-  const fileName = generateRefreshFile("ECTPFX", d);
+  const fileName = generateRefreshFile("ECTPFX", ...fileData);
   await uploadFile(fileName, "Rates")
   fs.rm(fileName + ".txt", err => {if(err) console.log(err)})
 }
