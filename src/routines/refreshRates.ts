@@ -1,4 +1,5 @@
 import "dotenv/config";
+import fs from "node:fs"
 import fetch, { Headers } from "node-fetch";
 import { generateRefreshFile } from "../utils/generateRefreshFile";
 import { uploadFile } from "../utils/uploadFile";
@@ -45,6 +46,7 @@ async function refreshRates() {
   const data = await res.json() as SuccessResponse
   const d = ["USD", "BRL", data.quotation.toFixed(2)]
   const fileName = generateRefreshFile("ECTPFX", d);
-  uploadFile(fileName, "Rates")
+  await uploadFile(fileName, "Rates")
+  fs.rm(fileName + ".txt", err => {if(err) console.log(err)})
 }
 refreshRates();
