@@ -13,11 +13,14 @@
   "license": "ISC",
   "dependencies": {
     "basic-ftp": "^5.0.5",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "fastify": "^4.28.0",
-    "node-fetch": "^3.3.2"
+    "express": "^4.19.2",
+    "node-fetch": "^3.3.2",
+    "socket.io": "^4.7.5"
   },
   "devDependencies": {
+    "@types/express": "^4.17.21",
     "@types/node": "^20.14.8",
     "tsup": "^8.1.0",
     "tsx": "^4.15.7",
