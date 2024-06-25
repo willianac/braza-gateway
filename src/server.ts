@@ -3,6 +3,7 @@ import cors from "cors";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import { WebHookResponse } from "./types/Webhook.js";
+import { sendTransaction } from "./controllers/sendTransaction.js";
 
 
 const app = express();
@@ -28,11 +29,16 @@ io.on("connection", (socket) => {
 app.post("/webhook", (req, res) => {
   const webhookData = req.body as WebHookResponse
   console.log(webhookData)
+
+  io.emit("response", webhookData)
   res.status(200).send("received")
 })
 
-app.post("/big/pix", (req, res) => {
-  const body = req.body
+app.post("/big/pix", async (req, res) => {
+  const amount = req.body.amount
+  const result = await sendTransaction(amount);
+  console.log(result?.message)
+  res.send(result)
 })
 
-httpServer.listen(3000);
+httpServer.listen(3002);

@@ -2,7 +2,7 @@ import fetch from "node-fetch"
 
 export async function sendTransaction(amount: string) {
   const bodyData = {
-    url_callback: "https://api.moneytransfersystem.com",
+    url_callback: "https://api.moneytransfersystem.com/webhook",
     markup_type: "P",
     markup_value: "0",
     pair: "USDTBRL",
