@@ -4,7 +4,7 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import { WebHookResponse } from "./types/Webhook.js";
 import { sendTransaction } from "./controllers/sendTransaction.js";
-
+import "dotenv/config";
 
 const app = express();
 app.use(express.json())
@@ -28,6 +28,7 @@ io.on("connection", (socket) => {
 
 app.post("/webhook", (req, res) => {
   const webhookData = req.body as WebHookResponse
+  console.log("RECEBEU NO WEBHOOK:")
   console.log(webhookData)
 
   io.emit("response", webhookData)
