@@ -1,8 +1,8 @@
 import "dotenv/config";
 import fs from "node:fs"
-import { generateRefreshFile } from "../utils/generateRefreshFile";
-import { uploadFile } from "../utils/uploadFile";
-import { getQuotation } from "../controllers/getQuotation";
+import { generateRefreshFile } from "../utils/generateRefreshFile.js";
+import { uploadFile } from "../utils/uploadFile.js";
+import { getQuotation } from "../controllers/getQuotation.js";
 
 const MARKUP_VALUES = ["2", "1", "0"]
 
