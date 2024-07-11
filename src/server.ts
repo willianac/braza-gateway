@@ -5,6 +5,7 @@ import { Server } from "socket.io";
 import { WebHookResponse } from "./types/Webhook.js";
 import { sendTransaction } from "./controllers/sendTransaction.js";
 import "dotenv/config";
+import { v4 as uuidv4 } from 'uuid';
 
 const app = express();
 app.use(express.json())
@@ -16,30 +17,46 @@ const io = new Server(httpServer, {
   }
 });
 
+type SocketSessionId = string
+type TransactionId = string
+const transactionIdMapping = new Map<SocketSessionId, TransactionId>()
+
 io.on("connection", (socket) => {
   console.log("CONECTADO")
 
-  socket.on("test", (data) => {
-    console.log("evento 'test' recebido!");
-    console.log(data);
-    socket.emit("test", "enviando test para o client, recebeu?");
-  });
+  socket.on("disconnect", () => {
+    transactionIdMapping.delete(socket.id)
+    console.log("desconectado: " + socket.id)
+  })
+  
 });
 
 app.post("/webhook", (req, res) => {
   const webhookData = req.body as WebHookResponse
+  const transactionId = req.query.id
+
+  let clientSession = ""
+
+  for(let [key, val] of transactionIdMapping.entries()) {
+    if(val === transactionId) {
+      clientSession = key
+      break
+    }
+  }
   console.log("RECEBEU NO WEBHOOK:")
   console.log(webhookData)
-
-  io.emit("response", webhookData)
+  if(webhookData.method === "pix_code") {
+    io.to(clientSession).emit("response", webhookData)
+  }
   res.status(200).send("received")
 })
 
 app.post("/big/pix", async (req, res) => {
-  const amount = req.body.amount
-  const result = await sendTransaction(amount);
-  console.log(result?.message)
-  res.send(result)
+  const { amount, socketSessionId } = req.body
+  const transactionId = uuidv4()
+  transactionIdMapping.set(socketSessionId, transactionId)
+  const result = await sendTransaction(amount, transactionId);
+  res.send()
 })
 
 httpServer.listen(3002);
