@@ -26,15 +26,28 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     transactionIdMapping.delete(socket.id)
+    console.log("desconectado: " + socket.id)
   })
+  
 });
 
 app.post("/webhook", (req, res) => {
   const webhookData = req.body as WebHookResponse
+  const transactionId = req.query.id
+
+  let clientSession = ""
+
+  for(let [key, val] of transactionIdMapping.entries()) {
+    if(val === transactionId) {
+      clientSession = key
+      break
+    }
+  }
   console.log("RECEBEU NO WEBHOOK:")
   console.log(webhookData)
-
-  io.emit("response", webhookData)
+  if(webhookData.method === "pix_code") {
+    io.to(clientSession).emit("response", webhookData)
+  }
   res.status(200).send("received")
 })
 
@@ -42,8 +55,8 @@ app.post("/big/pix", async (req, res) => {
   const { amount, socketSessionId } = req.body
   const transactionId = uuidv4()
   transactionIdMapping.set(socketSessionId, transactionId)
-  const result = await sendTransaction(amount);
-  res.send("done")
+  const result = await sendTransaction(amount, transactionId);
+  res.send()
 })
 
 httpServer.listen(3002);
