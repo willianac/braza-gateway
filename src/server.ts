@@ -5,6 +5,7 @@ import { Server } from "socket.io";
 import { WebHookResponse } from "./types/Webhook.js";
 import { sendTransaction } from "./controllers/sendTransaction.js";
 import "dotenv/config";
+import { v4 as uuidv4 } from 'uuid';
 
 const app = express();
 app.use(express.json())
@@ -16,14 +17,16 @@ const io = new Server(httpServer, {
   }
 });
 
+type SocketSessionId = string
+type TransactionId = string
+const transactionIdMapping = new Map<SocketSessionId, TransactionId>()
+
 io.on("connection", (socket) => {
   console.log("CONECTADO")
 
-  socket.on("test", (data) => {
-    console.log("evento 'test' recebido!");
-    console.log(data);
-    socket.emit("test", "enviando test para o client, recebeu?");
-  });
+  socket.on("disconnect", () => {
+    transactionIdMapping.delete(socket.id)
+  })
 });
 
 app.post("/webhook", (req, res) => {
@@ -36,10 +39,11 @@ app.post("/webhook", (req, res) => {
 })
 
 app.post("/big/pix", async (req, res) => {
-  const amount = req.body.amount
+  const { amount, socketSessionId } = req.body
+  const transactionId = uuidv4()
+  transactionIdMapping.set(socketSessionId, transactionId)
   const result = await sendTransaction(amount);
-  console.log(result?.message)
-  res.send(result)
+  res.send("done")
 })
 
 httpServer.listen(3002);
