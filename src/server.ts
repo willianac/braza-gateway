@@ -31,9 +31,9 @@ io.on("connection", (socket) => {
   
 });
 
-app.post("/webhook", (req, res) => {
+app.post("/webhook/:id", (req, res) => {
   const webhookData = req.body as WebHookResponse
-  const transactionId = req.query.id
+  const transactionId = req.params.id
 
   let clientSession = ""
 
