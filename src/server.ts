@@ -31,9 +31,9 @@ io.on("connection", (socket) => {
   
 });
 
-app.post("/webhook", (req, res) => {
+app.post("/webhook/:id", (req, res) => {
   const webhookData = req.body as WebHookResponse
-  const transactionId = req.query.id
+  const transactionId = req.params.id
 
   let clientSession = ""
 
@@ -45,10 +45,8 @@ app.post("/webhook", (req, res) => {
   }
   console.log("RECEBEU NO WEBHOOK:")
   console.log(webhookData)
-  if(webhookData.method === "pix_code") {
-    io.to(clientSession).emit("response", webhookData)
-  }
-  res.status(200).send("received")
+  io.to(clientSession).emit("response", webhookData)
+  res.status(200).send("success")
 })
 
 app.post("/big/pix", async (req, res) => {
