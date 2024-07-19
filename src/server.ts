@@ -68,4 +68,8 @@ app.get("/daily-transactions", async (req, res) => {
   }
 })
 
+app.get("/", (req, res) => {
+  res.status(200).send("api accessible")
+})
+
 httpServer.listen(3002);
