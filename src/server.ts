@@ -6,6 +6,7 @@ import { WebHookResponse } from "./types/Webhook.js";
 import { sendTransaction } from "./controllers/sendTransaction.js";
 import "dotenv/config";
 import { v4 as uuidv4 } from 'uuid';
+import { getDailyTransaction } from "./controllers/getDailyTransactions.js";
 
 const app = express();
 app.use(express.json())
@@ -55,6 +56,16 @@ app.post("/big/pix", async (req, res) => {
   transactionIdMapping.set(socketSessionId, transactionId)
   const result = await sendTransaction(amount, transactionId);
   res.send()
+})
+
+app.get("/daily-transactions", async (req, res) => {
+  try {
+    const result = await getDailyTransaction();
+    res.json(result)
+  } catch (error) {
+    console.log(error)
+    res.status(500).send(error);
+  }
 })
 
 httpServer.listen(3002);
