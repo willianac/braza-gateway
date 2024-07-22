@@ -6,6 +6,7 @@ import { WebHookResponse } from "./types/Webhook.js";
 import { sendTransaction } from "./controllers/sendTransaction.js";
 import "dotenv/config";
 import { v4 as uuidv4 } from 'uuid';
+import { js2xml } from "xml-js";
 import { getDailyTransaction } from "./controllers/getDailyTransactions.js";
 
 const app = express();
@@ -61,10 +62,15 @@ app.post("/big/pix", async (req, res) => {
 app.get("/daily-transactions", async (req, res) => {
   try {
     const result = await getDailyTransaction();
-    res.json(result)
+    const xmlData = js2xml(result, { compact: true, ignoreComment: true })
+    res.type("text/xml")
+    res.send(xmlData)
   } catch (error) {
-    console.log(error)
-    res.status(500).send(error);
+    if(error instanceof Error) {
+      console.log(error)
+      res.status(500).send(error.message);
+    }
+    res.send(500).send("Unexpected Server Error")
   }
 })
 
