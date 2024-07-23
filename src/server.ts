@@ -68,7 +68,7 @@ app.get("/daily-transactions", async (req, res) => {
   } catch (error) {
     if(error instanceof Error) {
       console.log(error)
-      res.status(500).send(error.message);
+      return res.status(500).send(error.message);
     }
     res.send(500).send("Unexpected Server Error")
   }
