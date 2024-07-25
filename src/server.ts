@@ -37,6 +37,12 @@ app.post("/webhook/:id", (req, res) => {
   const webhookData = req.body as WebHookResponse
   const transactionId = req.params.id
 
+  if(webhookData.method === "transaction_create") {
+    res.status(200).send()
+    console.log(webhookData)
+    return
+  }
+
   let clientSession = ""
 
   for(let [key, val] of transactionIdMapping.entries()) {
