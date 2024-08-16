@@ -4,7 +4,7 @@ export async function sendTransaction(amount: string, transactionId: string) {
   const bodyData = {
     url_callback: "https://api.moneytransfersystem.com/webhook/" + transactionId,
     markup_type: "P",
-    markup_value: "0.5",
+    markup_value: process.env.DEFAULT_MARKUP_VALUE ?? "0",
     pair: "USDTBRL",
     coin: "USDT",
     amount
@@ -30,6 +30,5 @@ export async function sendTransaction(amount: string, transactionId: string) {
   }
 
   const data = await res.json() as { message: string }
-  console.log(data)
   return data
 }
