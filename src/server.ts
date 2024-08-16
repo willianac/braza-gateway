@@ -8,6 +8,7 @@ import "dotenv/config";
 import { v4 as uuidv4 } from 'uuid';
 import { js2xml } from "xml-js";
 import { getDailyTransaction } from "./controllers/getDailyTransactions.js";
+import { getQuotation } from "./controllers/getQuotation.js";
 
 const app = express();
 app.use(express.json())
@@ -77,6 +78,30 @@ app.get("/daily-transactions", async (req, res) => {
       return res.status(500).send(error.message);
     }
     res.send(500).send("Unexpected Server Error")
+  }
+})
+
+app.get("/quotation", async (req, res) => {
+  try {
+    const { markupType, markupValue, pair } = req.query
+    if(!markupType || !markupValue || !pair) return res.status(400).send("Missing required parameters.")
+
+    const params = new URLSearchParams({
+      markup_type: markupType as string,
+      markup_value: markupValue as string,
+      pair: pair as string
+    })
+    const result = await getQuotation(params)
+    if("quotation" in result) {
+      res.status(200).json(result)
+    } else {
+      throw new Error("Unable to get quotation")
+    }
+  } catch (error) {
+    if(error instanceof Error) {
+      return res.status(500).send(error.message)
+    }
+    res.status(500).send("Internal error")
   }
 })
 
