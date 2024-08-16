@@ -4,7 +4,7 @@ import { generateRefreshFile } from "../utils/generateRefreshFile.js";
 import { uploadFile } from "../utils/uploadFile.js";
 import { getQuotation } from "../controllers/getQuotation.js";
 
-const MARKUP_VALUES = ["0.5"]
+const MARKUP_VALUES = [process.env.DEFAULT_MARKUP_VALUE as string ?? "0"]
 
 async function refreshRates() {
   let fileData: string[][] = [];

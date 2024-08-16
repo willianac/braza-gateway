@@ -27,6 +27,5 @@ export async function getDailyTransaction() {
   }
 
   const data = await res.json() as GetDailyTransactionResponse;
-  console.log(data)
   return data
 }
