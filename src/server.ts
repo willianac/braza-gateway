@@ -12,6 +12,7 @@ import { getQuotation } from "./controllers/getQuotation.js";
 
 const app = express();
 app.use(express.json())
+app.use(express.urlencoded({extended: true}))
 app.use(cors())
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
@@ -66,8 +67,10 @@ app.post("/big/pix", async (req, res) => {
   res.send()
 })
 
-app.get("/daily-transactions", async (req, res) => {
+app.post("/daily-transactions", async (req, res) => {
   try {
+    const { AccountNumber } = req.body
+    console.log("Form param received: " + AccountNumber)
     const result = await getDailyTransaction();
     const xmlData = js2xml(result, { compact: true, ignoreComment: true })
     res.type("text/xml")
