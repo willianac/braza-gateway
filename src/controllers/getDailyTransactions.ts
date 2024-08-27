@@ -33,5 +33,6 @@ export async function getDailyTransaction(credentials: Credentials) {
   }
 
   const data = await res.json() as GetDailyTransactionResponse;
-  return data
+  const filteredByStatus = data.transactions.filter(transaction => transaction.status === "paid")
+  return { balance: data.balance, filteredByStatus }
 }
