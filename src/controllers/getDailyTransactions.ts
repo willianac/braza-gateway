@@ -1,17 +1,23 @@
 import fetch, { Headers } from "node-fetch";
 import { Transaction } from "../types/Transaction.js";
 
+type Credentials = {
+  apiKey: string
+  applicationId: string
+  accountNumber: string
+}
+
 type GetDailyTransactionResponse = {
   balance: string
   transactions: Transaction[]
 }
 
-export async function getDailyTransaction() {
+export async function getDailyTransaction(credentials: Credentials) {
   const headers = new Headers()
 
-  headers.append("x-api-key", process.env.API_KEY as string)
-  headers.append("x-application-id", process.env.APPLICATION_ID as string)
-  headers.append("x-wallet", process.env.WALLET as string)
+  headers.append("x-api-key", credentials.apiKey)
+  headers.append("x-application-id", credentials.applicationId)
+  headers.append("x-account-number", credentials.accountNumber)
 
   const res = await fetch(process.env.BRAZA_URL as string + "transactions", {
     method: "POST",
@@ -23,9 +29,10 @@ export async function getDailyTransaction() {
     if(res.status === 504) {
       throw new Error("Gateway Timeout. GetBraza took too long to respond");
     }
-    throw new Error("Unknown error")
+    throw new Error("Unknown error at request to GetBraza")
   }
 
   const data = await res.json() as GetDailyTransactionResponse;
-  return data
+  const filteredByStatus = data.transactions.filter(transaction => transaction.status === "paid")
+  return { balance: data.balance, filteredByStatus }
 }
