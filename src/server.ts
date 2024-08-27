@@ -69,9 +69,13 @@ app.post("/big/pix", async (req, res) => {
 
 app.post("/daily-transactions", async (req, res) => {
   try {
-    const { AccountNumber } = req.body
-    console.log("Form param received: " + AccountNumber)
-    const result = await getDailyTransaction();
+    const { x_Account_Number, x_Api_key, x_Application_Id } = req.body
+    const result = await getDailyTransaction({
+      accountNumber: x_Account_Number || process.env.ACCOUNT_NUMBER,
+      apiKey: x_Api_key || process.env.API_KEY,
+      applicationId: x_Application_Id || process.env.APPLICATION_ID
+    });
+
     const xmlData = js2xml(result, { compact: true, ignoreComment: true })
     res.type("text/xml")
     res.send(xmlData)
