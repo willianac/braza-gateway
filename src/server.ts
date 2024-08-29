@@ -10,6 +10,8 @@ import { js2xml } from "xml-js";
 import { getDailyTransaction } from "./controllers/getDailyTransactions.js";
 import { getQuotation } from "./controllers/getQuotation.js";
 import merchantsConfig from "../config/merchants.json"
+import { doInternalTransfer } from "./controllers/doInternalTransfer.js";
+import { writeFile } from "fs";
 
 const app = express();
 app.use(express.json())
@@ -128,8 +130,36 @@ app.get("/", (req, res) => {
   res.status(200).send("api accessible")
 })
 
-app.post("/catch-xfee", (req, res) => {
+app.post("/catch-xfee", async (req, res) => {
+  try {
+    const { senderAccount, xFeeAccount, amount } = req.body
+    const merchant = merchantsConfig.merchants.find(merch => merch.account_number === senderAccount)
+    if(merchant) {
+      const result = await doInternalTransfer({
+        accountNumber: merchant.account_number,
+        apiKey: merchant.api_Key,
+        applicationId: merchant.application_id
+      }, xFeeAccount, amount)
+      res.status(200).send("success")
+    } else {
+      res.status(400).send("sender account-id not found")
+    }
+  } catch (error) {
+    console.log(error)
+    res.status(500).send("internal server error")
+  }
+})
 
+app.post("sender-list", (req, res) => {
+  const { Sender_List } = req.body
+  console.log(Sender_List)
+  if(Sender_List) {
+    writeFile("senders.json", Sender_List, err => {
+      err ? console.log(err) : undefined
+    })
+    return res.status(200).send()
+  }
+  res.status(400).send("não foi possivel capturar a lista de sender.")
 })
 
 httpServer.listen(3002);

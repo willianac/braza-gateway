@@ -1,11 +1,6 @@
 import fetch, { Headers } from "node-fetch";
 import { Transaction } from "../types/Transaction.js";
-
-type Credentials = {
-  apiKey: string
-  applicationId: string
-  accountNumber: string
-}
+import { Credentials } from "../types/GetBrazaAccountCredentials.js";
 
 type GetDailyTransactionResponse = {
   balance: string
