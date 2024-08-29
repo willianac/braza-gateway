@@ -157,7 +157,9 @@ app.post("sender-list", (req, res) => {
     writeFile("senders.json", Sender_List, err => {
       err ? console.log(err) : undefined
     })
+    return res.status(200).send()
   }
+  res.status(400).send("não foi possivel capturar a lista de sender.")
 })
 
 httpServer.listen(3002);
