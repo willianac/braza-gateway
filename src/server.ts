@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { js2xml } from "xml-js";
 import { getDailyTransaction } from "./controllers/getDailyTransactions.js";
 import { getQuotation } from "./controllers/getQuotation.js";
-import merchantsConfig from "../src/config/merchants.json"
+import merchantsConfig from "../config/merchants.json"
 
 const app = express();
 app.use(express.json())
@@ -126,6 +126,10 @@ app.get("/merchants/:id", (req, res) => {
 
 app.get("/", (req, res) => {
   res.status(200).send("api accessible")
+})
+
+app.post("/catch-xfee", (req, res) => {
+
 })
 
 httpServer.listen(3002);
