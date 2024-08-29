@@ -11,6 +11,7 @@ import { getDailyTransaction } from "./controllers/getDailyTransactions.js";
 import { getQuotation } from "./controllers/getQuotation.js";
 import merchantsConfig from "../config/merchants.json"
 import { doInternalTransfer } from "./controllers/doInternalTransfer.js";
+import { writeFile } from "fs";
 
 const app = express();
 app.use(express.json())
@@ -146,6 +147,16 @@ app.post("/catch-xfee", async (req, res) => {
   } catch (error) {
     console.log(error)
     res.status(500).send("internal server error")
+  }
+})
+
+app.post("sender-list", (req, res) => {
+  const { Sender_List } = req.body
+  console.log(Sender_List)
+  if(Sender_List) {
+    writeFile("senders.json", Sender_List, err => {
+      err ? console.log(err) : undefined
+    })
   }
 })
 
