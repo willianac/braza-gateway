@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { js2xml } from "xml-js";
 import { getDailyTransaction } from "./controllers/getDailyTransactions.js";
 import { getQuotation } from "./controllers/getQuotation.js";
+import merchantsConfig from "../src/config/merchants.json"
 
 const app = express();
 app.use(express.json())
@@ -110,6 +111,13 @@ app.get("/quotation", async (req, res) => {
     }
     res.status(500).send("Internal error")
   }
+})
+
+app.get("/merchants/:id", (req, res) => {
+  const { id } = req.params
+  const merchantsList = merchantsConfig.merchants
+  const merchant = merchantsList.find(merch => merch.merchantId === id)
+  res.status(200).json(merchant)
 })
 
 app.get("/", (req, res) => {
