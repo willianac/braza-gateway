@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { js2xml } from "xml-js";
 import { getDailyTransaction } from "./controllers/getDailyTransactions.js";
 import { getQuotation } from "./controllers/getQuotation.js";
+import merchantsConfig from "../config/merchants.json"
 
 const app = express();
 app.use(express.json())
@@ -112,8 +113,23 @@ app.get("/quotation", async (req, res) => {
   }
 })
 
+app.get("/merchants/:id", (req, res) => {
+  const { id } = req.params
+  const merchantsList = merchantsConfig.merchants
+  const merchant = merchantsList.find(merch => merch.merchantId === id)
+  if(merchant) {
+    const { api_Key, application_id, account_number, wallet, ...merchantWithoutKeys } = merchant
+    return res.status(200).json(merchantWithoutKeys)
+  }
+  res.status(204).send()
+})
+
 app.get("/", (req, res) => {
   res.status(200).send("api accessible")
+})
+
+app.post("/catch-xfee", (req, res) => {
+
 })
 
 httpServer.listen(3002);
