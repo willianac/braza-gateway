@@ -150,11 +150,11 @@ app.post("/catch-xfee", async (req, res) => {
   }
 })
 
-app.post("sender-list", (req, res) => {
-  const { Sender_List } = req.body
-  console.log(Sender_List)
-  if(Sender_List) {
-    writeFile("senders.json", Sender_List, err => {
+app.post("/account-list", (req, res) => {
+  const { AccountList, LicenseCode } = req.body
+  console.log(AccountList)
+  if(AccountList) {
+    writeFile(`${LicenseCode}.json`, AccountList, err => {
       err ? console.log(err) : undefined
     })
     return res.status(200).send()
