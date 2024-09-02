@@ -1,17 +1,16 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import { WebHookResponse } from "./types/Webhook.js";
-import { sendTransaction } from "./controllers/sendTransaction.js";
+import { sendTransaction } from "./services/sendTransaction.js";
 import "dotenv/config";
 import { v4 as uuidv4 } from 'uuid';
-import { js2xml } from "xml-js";
-import { getDailyTransaction } from "./controllers/getDailyTransactions.js";
-import { getQuotation } from "./controllers/getQuotation.js";
-import merchantsConfig from "../config/EC.json"
-import { doInternalTransfer } from "./controllers/doInternalTransfer.js";
-import { writeFile } from "fs";
+import { quotationController } from "./controllers/quotationController.js";
+import { getTransactionsController } from "./controllers/getTransactionsController.js";
+import { getMerchantById } from "./controllers/getMerchantById.js";
+import { catchXpressoFee } from "./controllers/catchXpressoFee.js";
+import { retrieveAccountList } from "./controllers/retrieveAccountList.js";
 
 const app = express();
 app.use(express.json())
@@ -83,102 +82,20 @@ app.post("/big/pix", async (req, res) => {
   }
 })
 
-app.post("/daily-transactions", async (req, res) => {
-  try {
-    const { x_Account_Number, x_Api_key, x_Application_Id } = req.body
-    const result = await getDailyTransaction({
-      accountNumber: x_Account_Number || process.env.ACCOUNT_NUMBER,
-      apiKey: x_Api_key || process.env.API_KEY,
-      applicationId: x_Application_Id || process.env.APPLICATION_ID
-    });
-
-    const xmlData = js2xml(result, { compact: true, ignoreComment: true })
-    res.type("text/xml")
-    res.send(xmlData)
-  } catch (error) {
-    if(error instanceof Error) {
-      console.log(error)
-      return res.status(500).send(error.message);
-    }
-    res.send(500).send("Unexpected Server Error")
-  }
-})
-
-app.get("/quotation", async (req, res) => {
-  try {
-    const { markupType, markupValue, pair } = req.query
-    if(!markupType || !markupValue || !pair) return res.status(400).send("Missing required parameters.")
-
-    const params = new URLSearchParams({
-      markup_type: markupType as string,
-      markup_value: markupValue as string,
-      pair: pair as string
-    })
-    const result = await getQuotation(params)
-    if("quotation" in result) {
-      res.status(200).json(result)
-    } else {
-      throw new Error("Unable to get quotation")
-    }
-  } catch (error) {
-    if(error instanceof Error) {
-      return res.status(500).send(error.message)
-    }
-    res.status(500).send("Internal error")
-  }
-})
-
-app.get("/merchants/:id", (req, res) => {
-  const { id } = req.params
-  const merchantsList = merchantsConfig.merchants
-  const merchant = merchantsList.find(merch => merch.merchantId === id)
-  if(merchant) {
-    const { api_Key, application_id, account_number, wallet, ...merchantWithoutKeys } = merchant
-    return res.status(200).json(merchantWithoutKeys)
-  }
-  res.status(204).send()
-})
+app.post("/daily-transactions", getTransactionsController)
+app.get("/quotation", quotationController)
+app.get("/merchants/:id", getMerchantById)
+app.post("/catch-xfee", catchXpressoFee)
+app.post("/account-list", retrieveAccountList)
 
 app.get("/", (req, res) => {
   res.status(200).send("api accessible")
 })
 
-app.post("/catch-xfee", async (req, res) => {
-  try {
-    const { senderAccount, xFeeAccount, amount } = req.body
-    const merchant = merchantsConfig.merchants.find(merch => merch.account_number === senderAccount)
-    if(!merchant) return res.status(400).send("sender account-id not found")
-    
-    const result = await doInternalTransfer({
-      accountNumber: merchant.account_number,
-      apiKey: merchant.api_Key,
-      applicationId: merchant.application_id
-    }, xFeeAccount, amount)   
-    if("message" in result) {
-      res.status(200).send("success")
-    } else {
-      console.log(result)
-      res.status(500).json({
-        erro: "nao foi possivel fazer a transferencia interna",
-        ...result
-      })
-    }
-    
-  } catch (error) {
-    console.log(error)
-    res.status(500).send("internal server error")
-  }
-})
-
-app.post("/account-list", (req, res) => {
-  const { AccountList, LicenseCode } = req.body
-  if(AccountList) {
-    writeFile(`./config/${LicenseCode}.json`, AccountList, err => {
-      err ? console.log(err) : undefined
-    })
-    return res.status(200).send()
-  }
-  res.status(400).send("não foi possivel capturar a lista de sender.")
-})
-
 httpServer.listen(3002);
+
+function errorHandler(err: Error, req: Request, res: Response, next: NextFunction) {
+  console.log(err.message)
+  res.status(500).send(err.message || "Unexpected server error")
+}
+app.use(errorHandler)
