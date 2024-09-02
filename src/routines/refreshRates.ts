@@ -2,7 +2,7 @@ import "dotenv/config";
 import fs from "node:fs"
 import { generateRefreshFile } from "../utils/generateRefreshFile.js";
 import { uploadFile } from "../utils/uploadFile.js";
-import { getQuotation } from "../controllers/getQuotation.js";
+import { getQuotation } from "../services/getQuotation.js";
 
 const MARKUP_VALUES = [process.env.DEFAULT_MARKUP_VALUE as string ?? "0"]
 
