@@ -1,4 +1,4 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import { createServer } from "http";
 import { Server } from "socket.io";
@@ -93,3 +93,9 @@ app.get("/", (req, res) => {
 })
 
 httpServer.listen(3002);
+
+function errorHandler(err: Error, req: Request, res: Response, next: NextFunction) {
+  console.log(err.message)
+  res.status(500).send(err.message || "Unexpected server error")
+}
+app.use(errorHandler)

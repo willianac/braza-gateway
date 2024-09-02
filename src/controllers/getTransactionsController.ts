@@ -5,6 +5,8 @@ import { js2xml } from "xml-js";
 export async function getTransactionsController(req: Request, res: Response, next: NextFunction) {
   try {
     const { x_Account_Number, x_Api_key, x_Application_Id } = req.body
+    if(!x_Account_Number || !x_Api_key || x_Application_Id) return res.status(400).send("missing required parameters")
+    
     const result = await getDailyTransaction({
       accountNumber: x_Account_Number || process.env.ACCOUNT_NUMBER,
       apiKey: x_Api_key || process.env.API_KEY,
@@ -15,10 +17,6 @@ export async function getTransactionsController(req: Request, res: Response, nex
     res.type("text/xml")
     res.send(xmlData)
   } catch (error) {
-    if(error instanceof Error) {
-      console.log(error)
-      return res.status(500).send(error.message);
-    }
-    res.send(500).send("Unexpected Server Error")
+    next(error)
   }
 }

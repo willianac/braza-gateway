@@ -4,7 +4,7 @@ import { getQuotation } from "../services/getQuotation.js";
 export async function quotationController(req: Request, res: Response, next: NextFunction) {
   try {
     const { markupType, markupValue, pair } = req.query
-    if(!markupType || !markupValue || !pair) throw new Error("missing required parameters")
+    if(!markupType || !markupValue || !pair) return res.status(400).send("missing required parameters")
 
     const params = new URLSearchParams({
       markup_type: markupType as string,

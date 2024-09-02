@@ -6,7 +6,7 @@ export async function catchXpressoFee(req: Request, res: Response, next: NextFun
   try {
     const { senderAccount, xFeeAccount, amount } = req.body
     const merchant = merchantsConfig.merchants.find(merch => merch.account_number === senderAccount)
-    if(!merchant) return res.status(400).send("sender account-id not found")
+    if(!merchant) throw new Error("sender account-id not found")
     
     const result = await doInternalTransfer({
       accountNumber: merchant.account_number,
@@ -16,15 +16,10 @@ export async function catchXpressoFee(req: Request, res: Response, next: NextFun
     if("message" in result) {
       res.status(200).send("success")
     } else {
-      console.log(result)
-      res.status(500).json({
-        erro: "nao foi possivel fazer a transferencia interna",
-        ...result
-      })
+      throw new Error("nao foi possivel fazer a transferencia interna")
     }
     
   } catch (error) {
-    console.log(error)
-    res.status(500).send("internal server error")
+    next(error)
   }
 }

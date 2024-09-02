@@ -9,5 +9,5 @@ export async function retrieveAccountList(req: Request, res: Response, next: Nex
     })
     return res.status(200).send()
   }
-  res.status(400).send("não foi possivel capturar a lista de sender.")
+  res.status(400).send("parametros invalidos.")
 }
