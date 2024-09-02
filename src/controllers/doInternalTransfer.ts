@@ -7,7 +7,8 @@ export async function doInternalTransfer(sourceAccCredentials: Credentials, dest
   headers.append("x-api-key", sourceAccCredentials.apiKey)
   headers.append("x-application-id", sourceAccCredentials.applicationId)
   headers.append("x-account-number", sourceAccCredentials.accountNumber)
-
+  headers.append("Content-Type", "application/json")
+  
   const body = {
     to_account_number: destinationAcc,
     coin_name: "USDT",
