@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { js2xml } from "xml-js";
 import { getDailyTransaction } from "./controllers/getDailyTransactions.js";
 import { getQuotation } from "./controllers/getQuotation.js";
-import merchantsConfig from "../config/merchants.json"
+import merchantsConfig from "../config/EC.json"
 import { doInternalTransfer } from "./controllers/doInternalTransfer.js";
 import { writeFile } from "fs";
 
@@ -63,10 +63,10 @@ app.post("/webhook/:id", (req, res) => {
 })
 
 app.post("/big/pix", async (req, res) => {
-  const { amount, socketSessionId } = req.body
+  const { amount, socketSessionId, markupValue } = req.body
   const transactionId = uuidv4()
   transactionIdMapping.set(socketSessionId, transactionId)
-  const result = await sendTransaction(amount, transactionId);
+  const result = await sendTransaction(amount, markupValue, transactionId);
   res.send()
 })
 
@@ -152,9 +152,8 @@ app.post("/catch-xfee", async (req, res) => {
 
 app.post("/account-list", (req, res) => {
   const { AccountList, LicenseCode } = req.body
-  console.log(AccountList)
   if(AccountList) {
-    writeFile(`${LicenseCode}.json`, AccountList, err => {
+    writeFile(`./config/${LicenseCode}.json`, AccountList, err => {
       err ? console.log(err) : undefined
     })
     return res.status(200).send()

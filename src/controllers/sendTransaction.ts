@@ -1,10 +1,10 @@
 import fetch, { Headers } from "node-fetch"
 
-export async function sendTransaction(amount: string, transactionId: string) {
+export async function sendTransaction(amount: string, markupValue: string, transactionId: string) {
   const bodyData = {
     url_callback: "https://api.moneytransfersystem.com/webhook/" + transactionId,
     markup_type: "P",
-    markup_value: process.env.DEFAULT_MARKUP_VALUE ?? "0",
+    markup_value: markupValue ?? "0",
     pair: "USDTBRL",
     coin: "USDT",
     amount
