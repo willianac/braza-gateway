@@ -1,7 +1,12 @@
 import fetch, { Headers } from "node-fetch";
 import { Credentials } from "../types/GetBrazaAccountCredentials.js";
+import { RequestError } from "../types/BrazaRequestError.js";
 
-export async function doInternalTransfer(sourceAccCredentials: Credentials, destinationAcc: string, amount: number) {
+export async function doInternalTransfer(
+  sourceAccCredentials: Credentials, 
+  destinationAcc: string, 
+  amount: number
+): Promise<{ message: string } | RequestError> {
   const headers = new Headers()
 
   headers.append("x-api-key", sourceAccCredentials.apiKey)
@@ -22,10 +27,10 @@ export async function doInternalTransfer(sourceAccCredentials: Credentials, dest
   })
 
   if(!res.ok) {
-    console.log("RESPONSE NOT OKAY")
-    const error = await res.json()
+    console.log("INTERNAL TRANSFER RESPONSE NOT OKAY")
+    const error = await res.json() as RequestError
     console.log(error)
-    return
+    return error
   }
 
   const data = await res.json() as { message: string }

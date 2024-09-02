@@ -1,4 +1,5 @@
 import fetch, { Headers } from "node-fetch";
+import { RequestError } from "../types/BrazaRequestError.js";
 
 type SuccessResponse = {
   quotation: number
@@ -6,16 +7,7 @@ type SuccessResponse = {
   time_exp: string
 }
 
-type ErrorResponse = {
-  detail: {
-    type: string
-    msg: string
-    input: any
-    loc: string[]
-  }[]
-}
-
-export async function getQuotation(params: URLSearchParams): Promise<SuccessResponse | ErrorResponse> {
+export async function getQuotation(params: URLSearchParams): Promise<SuccessResponse | RequestError> {
   const headers = new Headers()
   headers.append("x-api-key", process.env.API_KEY as string)
   headers.append("x-application-id", process.env.APPLICATION_ID as string)
@@ -28,7 +20,7 @@ export async function getQuotation(params: URLSearchParams): Promise<SuccessResp
   })
 
   if(!res.ok) {
-    const errorData = await res.json() as ErrorResponse
+    const errorData = await res.json() as RequestError
     return errorData
   }
 
