@@ -63,11 +63,24 @@ app.post("/webhook/:id", (req, res) => {
 })
 
 app.post("/big/pix", async (req, res) => {
-  const { amount, socketSessionId, markupValue } = req.body
-  const transactionId = uuidv4()
-  transactionIdMapping.set(socketSessionId, transactionId)
-  const result = await sendTransaction(amount, markupValue, transactionId);
-  res.send()
+  try {
+    const { amount, socketSessionId, markupValue } = req.body
+    const transactionId = uuidv4()
+    transactionIdMapping.set(socketSessionId, transactionId)
+    const result = await sendTransaction(amount, markupValue, transactionId);
+    if("message" in result) {
+      res.status(200).send()
+    } else {
+      console.log(result)
+      res.status(500).json({
+        erro: "nao foi possivel iniciar uma transação pix",
+        ...result
+    })
+  }
+  } catch (error) {
+    console.log(error)
+    res.status(500).send(error)
+  }
 })
 
 app.post("/daily-transactions", async (req, res) => {

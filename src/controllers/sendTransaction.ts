@@ -1,6 +1,11 @@
 import fetch, { Headers } from "node-fetch"
+import { RequestError } from "../types/BrazaRequestError.js"
 
-export async function sendTransaction(amount: string, markupValue: string, transactionId: string) {
+export async function sendTransaction(
+  amount: string, 
+  markupValue: string, 
+  transactionId: string
+): Promise<{ message: string } | RequestError> {
   const bodyData = {
     url_callback: "https://api.moneytransfersystem.com/webhook/" + transactionId,
     markup_type: "P",
@@ -24,9 +29,9 @@ export async function sendTransaction(amount: string, markupValue: string, trans
 
   if(!res.ok) {
     console.log("RESPONSE NOT OKAY")
-    const error = await res.json()
+    const error = await res.json() as RequestError
     console.log(error)
-    return
+    return error
   }
 
   const data = await res.json() as { message: string }
