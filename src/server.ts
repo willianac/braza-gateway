@@ -63,10 +63,10 @@ app.post("/webhook/:id", (req, res) => {
 })
 
 app.post("/big/pix", async (req, res) => {
-  const { amount, socketSessionId } = req.body
+  const { amount, socketSessionId, markupValue } = req.body
   const transactionId = uuidv4()
   transactionIdMapping.set(socketSessionId, transactionId)
-  const result = await sendTransaction(amount, transactionId);
+  const result = await sendTransaction(amount, markupValue, transactionId);
   res.send()
 })
 
