@@ -11,6 +11,7 @@ import { getTransactionsController } from "./controllers/getTransactionsControll
 import { getMerchantById } from "./controllers/getMerchantById.js";
 import { catchXpressoFee } from "./controllers/catchXpressoFee.js";
 import { retrieveAccountList } from "./controllers/retrieveAccountList.js";
+import { getNewCredentials } from "./controllers/getNewCredentialsController.js";
 
 const app = express();
 app.use(express.json())
@@ -87,6 +88,7 @@ app.get("/quotation", quotationController)
 app.get("/merchants/:id", getMerchantById)
 app.post("/catch-xfee", catchXpressoFee)
 app.post("/account-list", retrieveAccountList)
+app.post("/new-authorization", getNewCredentials)
 
 app.get("/", (req, res) => {
   res.status(200).send("api accessible")
