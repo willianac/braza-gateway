@@ -5,7 +5,7 @@ import { js2xml } from "xml-js";
 export async function getTransactionsController(req: Request, res: Response, next: NextFunction) {
   try {
     const { x_Account_Number, x_Api_key, x_Application_Id } = req.body
-    if(!x_Account_Number || !x_Api_key || x_Application_Id) return res.status(400).send("missing required parameters")
+    if(!x_Account_Number || !x_Api_key || !x_Application_Id) return res.status(400).send("missing required parameters")
     
     const result = await getDailyTransaction({
       accountNumber: x_Account_Number || process.env.ACCOUNT_NUMBER,
