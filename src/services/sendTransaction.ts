@@ -18,7 +18,7 @@ export async function sendTransaction(
   const headers = new Headers()
   headers.append("x-api-key", process.env.API_KEY as string)
   headers.append("x-application-id", process.env.APPLICATION_ID as string)
-  headers.append("x-wallet", process.env.WALLET as string)
+  headers.append("x-account-number", process.env.ACCOUNT_NUMBER as string)
   headers.append("Content-Type", "application/json")
 
   const res = await fetch(process.env.BRAZA_URL as string, {
