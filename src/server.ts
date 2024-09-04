@@ -12,6 +12,7 @@ import { getMerchantById } from "./controllers/getMerchantById.js";
 import { catchXpressoFee } from "./controllers/catchXpressoFee.js";
 import { retrieveAccountList } from "./controllers/retrieveAccountList.js";
 import { getNewCredentials } from "./controllers/getNewCredentialsController.js";
+import { getMerchantByAccountId } from "./utils/getMerchantByAccountId.js";
 
 const app = express();
 app.use(express.json())
@@ -64,10 +65,18 @@ app.post("/webhook/:id", (req, res) => {
 
 app.post("/big/pix", async (req, res) => {
   try {
-    const { amount, socketSessionId, markupValue } = req.body
+    const { amount, socketSessionId, accountId } = req.body
     const transactionId = uuidv4()
     transactionIdMapping.set(socketSessionId, transactionId)
-    const result = await sendTransaction(amount, markupValue, transactionId);
+    const merchant = getMerchantByAccountId(accountId)
+    if(!merchant) return res.status(204).send("não encontramos nenhuma conta com este id")
+    
+    const result = await sendTransaction(amount, transactionId, {
+      accountNumber: merchant.account_number,
+      apiKey: merchant.api_Key,
+      applicationId: merchant.application_id
+    });
+    
     if("message" in result) {
       res.status(200).send()
     } else {
