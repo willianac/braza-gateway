@@ -7,12 +7,12 @@ import { Merchant } from "../types/Merchant.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-export async function getMerchantById(req: Request, res: Response, next: NextFunction) {
-  const { id } = req.params
+export async function getMerchantByAccountNumber(req: Request, res: Response, next: NextFunction) {
+  const { accNumber } = req.params
   const configPath = resolve(__dirname, '../config/EC.json');
   const configFile = JSON.parse(readFileSync(configPath, 'utf-8'));
   const merchantList = configFile.merchants as Merchant[]
-  const merchant = merchantList.find(merch => merch.merchantId === id)
+  const merchant = merchantList.find(merch => merch.account_number === accNumber)
   
   if(merchant) {
     const { api_Key, application_id, account_number, wallet, ...merchantWithoutKeys } = merchant
