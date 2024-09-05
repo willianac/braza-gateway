@@ -14,7 +14,7 @@ export async function catchXpressoFee(req: Request, res: Response, next: NextFun
       applicationId: merchant.application_id
     }, xFeeAccount, amount)   
     if("message" in result) {
-      res.status(200).send("success")
+      res.status(200).send()
     } else {
       throw new Error("nao foi possivel fazer a transferencia interna")
     }

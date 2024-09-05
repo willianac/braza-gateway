@@ -8,7 +8,7 @@ import "dotenv/config";
 import { v4 as uuidv4 } from 'uuid';
 import { quotationController } from "./controllers/quotationController.js";
 import { getTransactionsController } from "./controllers/getTransactionsController.js";
-import { getMerchantById } from "./controllers/getMerchantById.js";
+import { getMerchantByAccountNumber } from "./controllers/getMerchantByAccountNumber.js";
 import { catchXpressoFee } from "./controllers/catchXpressoFee.js";
 import { retrieveAccountList } from "./controllers/retrieveAccountList.js";
 import { getNewCredentials } from "./controllers/getNewCredentialsController.js";
@@ -94,7 +94,7 @@ app.post("/big/pix", async (req, res) => {
 
 app.post("/daily-transactions", getTransactionsController)
 app.get("/quotation", quotationController)
-app.get("/merchants/:id", getMerchantById)
+app.get("/merchants/:accNumber", getMerchantByAccountNumber)
 app.post("/catch-xfee", catchXpressoFee)
 app.post("/account-list", retrieveAccountList)
 app.post("/new-authorization", getNewCredentials)
