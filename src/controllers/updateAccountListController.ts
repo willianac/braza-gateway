@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { writeFile } from "fs";
 
-export async function retrieveAccountList(req: Request, res: Response, next: NextFunction) {
+export async function updateAccountListController(req: Request, res: Response, next: NextFunction) {
   const { AccountList, LicenseCode } = req.body
   if(AccountList) {
     writeFile(`./config/${LicenseCode}.json`, AccountList, err => {

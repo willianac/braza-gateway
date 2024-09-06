@@ -9,8 +9,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { quotationController } from "./controllers/quotationController.js";
 import { getTransactionsController } from "./controllers/getTransactionsController.js";
 import { getMerchantByAccountNumber } from "./controllers/getMerchantByAccountNumber.js";
-import { catchXpressoFee } from "./controllers/catchXpressoFee.js";
-import { retrieveAccountList } from "./controllers/retrieveAccountList.js";
+import { catchXpressoFeeController } from "./controllers/catchXpressoFeeController.js";
+import { updateAccountListController } from "./controllers/updateAccountListController.js";
 import { getNewCredentials } from "./controllers/getNewCredentialsController.js";
 import { getMerchantByAccountId } from "./utils/getMerchantByAccountId.js";
 
@@ -95,8 +95,8 @@ app.post("/big/pix", async (req, res) => {
 app.post("/daily-transactions", getTransactionsController)
 app.get("/quotation", quotationController)
 app.get("/merchants/:accNumber", getMerchantByAccountNumber)
-app.post("/catch-xfee", catchXpressoFee)
-app.post("/account-list", retrieveAccountList)
+app.post("/catch-xfee", catchXpressoFeeController)
+app.post("/account-list", updateAccountListController)
 app.post("/new-authorization", getNewCredentials)
 
 app.get("/", (req, res) => {
