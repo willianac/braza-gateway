@@ -14,6 +14,8 @@ import { updateAccountListController } from "./controllers/updateAccountListCont
 import { getNewCredentials } from "./controllers/getNewCredentialsController.js";
 import { getMerchantByAccountId } from "./utils/getMerchantByAccountId.js";
 import { withdrawController } from "./controllers/withdrawController.js";
+import { internalTransferController } from "./controllers/internalTransferController.js";
+import { getBalanceController } from "./controllers/getBalanceController.js";
 
 const app = express();
 app.use(express.json())
@@ -100,6 +102,8 @@ app.post("/catch-xfee", catchXpressoFeeController)
 app.post("/account-list", updateAccountListController)
 app.post("/new-authorization", getNewCredentials)
 app.post("/withdraw", withdrawController)
+app.post("/inner-transfer", internalTransferController)
+app.post("/balance", getBalanceController)
 
 app.get("/", (req, res) => {
   res.status(200).send("api accessible")

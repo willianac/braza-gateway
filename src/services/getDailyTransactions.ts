@@ -24,6 +24,9 @@ export async function getDailyTransaction(credentials: Credentials) {
     if(res.status === 504) {
       throw new Error("Gateway Timeout. GetBraza took too long to respond");
     }
+    if(res.status === 401) {
+      throw new Error("Unauthorized. Credentials may be incorrect.")
+    }
     throw new Error("Unknown error at request to GetBraza")
   }
 
