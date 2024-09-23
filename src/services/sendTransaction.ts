@@ -25,7 +25,8 @@ export async function sendTransaction(
   const res = await fetch(process.env.BRAZA_URL as string, {
     method: "POST",
     headers,
-    body: JSON.stringify(bodyData)
+    body: JSON.stringify(bodyData),
+    signal: AbortSignal.timeout(12000)
   })
 
   if(!res.ok) {
