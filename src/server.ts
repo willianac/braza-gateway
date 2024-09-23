@@ -16,6 +16,7 @@ import { getMerchantByAccountId } from "./utils/getMerchantByAccountId.js";
 import { withdrawController } from "./controllers/withdrawController.js";
 import { internalTransferController } from "./controllers/internalTransferController.js";
 import { getBalanceController } from "./controllers/getBalanceController.js";
+import { getTransactionsByAccountNumberController } from "./controllers/getTransactionsByAccountNumberController.js";
 
 const app = express();
 app.use(express.json())
@@ -95,9 +96,11 @@ app.post("/big/pix", async (req, res) => {
   }
 })
 
-app.post("/daily-transactions", getTransactionsController)
 app.get("/quotation", quotationController)
 app.get("/merchants/:accNumber", getMerchantByAccountNumber)
+app.get("/transactions/:accNumber", getTransactionsByAccountNumberController)
+
+app.post("/daily-transactions", getTransactionsController)
 app.post("/catch-xfee", catchXpressoFeeController)
 app.post("/account-list", updateAccountListController)
 app.post("/new-authorization", getNewCredentials)
