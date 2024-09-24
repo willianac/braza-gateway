@@ -115,7 +115,6 @@ app.get("/", (req, res) => {
 httpServer.listen(3002);
 
 function errorHandler(err: Error, req: Request, res: Response, next: NextFunction) {
-  console.log(err.message)
   res.status(500).send(err.message || "Unexpected server error")
 }
 app.use(errorHandler)

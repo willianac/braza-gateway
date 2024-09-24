@@ -23,7 +23,7 @@ export async function internalTransferController(req: Request, res: Response, ne
     if("message" in result) {
       res.status(200).send("success")
     } else {
-      throw new Error("nao foi possivel fazer a transferencia interna")
+      throw new Error(JSON.stringify(result))
     }
   } catch (error) {
     next(error)

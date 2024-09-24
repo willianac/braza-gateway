@@ -13,7 +13,7 @@ export async function getNewCredentials(req: Request, res: Response, next: NextF
       applicationId: x_Application_Id
     })
 
-    if("detail" in result) throw new Error("erro ao gerar uma nova credencial")
+    if("detail" in result) throw new Error(JSON.stringify(result))
 
     const response = {
       new_authorization: {

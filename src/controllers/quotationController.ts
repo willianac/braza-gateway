@@ -15,7 +15,7 @@ export async function quotationController(req: Request, res: Response, next: Nex
     if("quotation" in result) {
       res.status(200).json(result)
     } else {
-      throw new Error("Unable to get quotation")
+      throw new Error(JSON.stringify(result))
     }
   } catch (error) {
     next(error)
