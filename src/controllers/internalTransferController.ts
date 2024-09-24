@@ -26,6 +26,8 @@ export async function internalTransferController(req: Request, res: Response, ne
       throw new Error(JSON.stringify(result))
     }
   } catch (error) {
+    //testando enviar como resposta para o xpresso erro com status 200.
+    res.status(200).send(JSON.stringify(error))
     next(error)
   }
 }

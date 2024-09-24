@@ -15,6 +15,8 @@ export async function getBalanceController(req: Request, res: Response, next: Ne
     res.type("text/xml")
     res.status(200).send(xmlData)
   } catch (error) {
-    next(error)
+    //testando enviar como resposta para o xpresso erro com status 200.
+    res.status(200).send(error)
+    //next(error)
   }
 }
