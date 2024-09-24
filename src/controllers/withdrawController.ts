@@ -24,7 +24,7 @@ export async function withdrawController(req: Request, res: Response, next: Next
       blockchain: Blockchain,
       wallet: Tron_Wallet
     })
-    if("detail" in result) throw new Error("nao foi possivel realizar o saque")
+    if("detail" in result) throw new Error(JSON.stringify(result))
     res.status(200).send(result.message)
   } catch (error) {
     next(error)
