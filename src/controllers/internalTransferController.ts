@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { doInternalTransfer } from "../services/doInternalTransfer.js";
+import { js2xml } from "xml-js";
 
 export async function internalTransferController(req: Request, res: Response, next: NextFunction) {
   try {
@@ -26,8 +27,11 @@ export async function internalTransferController(req: Request, res: Response, ne
       throw new Error(JSON.stringify(result))
     }
   } catch (error) {
-    //testando enviar como resposta para o xpresso erro com status 200.
-    res.status(200).send(JSON.stringify(error))
+    if(error instanceof Error) {
+      //testando enviar como resposta para o xpresso erro com status 200.
+      const xmlErr = js2xml(JSON.parse(error.message), { compact: true, ignoreComment: true })
+      return res.status(500).send(xmlErr)
+    }
     next(error)
   }
 }

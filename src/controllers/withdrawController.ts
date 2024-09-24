@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { withdraw } from "../services/withdraw.js";
+import { js2xml } from "xml-js";
 
 export async function withdrawController(req: Request, res: Response, next: NextFunction) {
   try {
@@ -27,8 +28,11 @@ export async function withdrawController(req: Request, res: Response, next: Next
     if("detail" in result) throw new Error(JSON.stringify(result))
     res.status(200).send(result.message)
   } catch (error) {
-    //testando enviar como resposta para o xpresso erro com status 200.
-    res.status(200).send(JSON.stringify(error))
-    //next(error)
+    if(error instanceof Error) {
+      //testando enviar como resposta para o xpresso erro com status 200.
+      const xmlErr = js2xml(JSON.parse(error.message), { compact: true, ignoreComment: true })
+      return res.status(500).send(xmlErr)
+    }
+    next(error)
   }
 }
