@@ -27,6 +27,8 @@ export async function withdrawController(req: Request, res: Response, next: Next
     if("detail" in result) throw new Error(JSON.stringify(result))
     res.status(200).send(result.message)
   } catch (error) {
-    next(error)
+    //testando enviar como resposta para o xpresso erro com status 200.
+    res.status(200).send(JSON.stringify(error))
+    //next(error)
   }
 }
