@@ -22,6 +22,19 @@ const app = express();
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 app.use(cors())
+
+app.set("trust proxy", true)
+const allowedIps = ["204.11.239.243"]
+app.use((req, res, next) => {
+  const requestIp = req.ip
+  console.log(requestIp)
+  if(allowedIps.includes(requestIp!)) {
+    next()
+  } else {
+    res.status(403).json({message: "Forbidden"})
+  }
+})
+
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
