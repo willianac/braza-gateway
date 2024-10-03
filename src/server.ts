@@ -24,14 +24,20 @@ app.use(express.urlencoded({extended: true}))
 app.use(cors())
 
 app.set("trust proxy", true)
-const allowedIps = ["204.11.239.243"]
+
+const trustedIPs = ["204.11.239.243"]
+const allowedOrigins = ["https://checkout.moneytransmittersystem.com"]
 app.use((req, res, next) => {
   const requestIp = req.ip
-  console.log(requestIp)
-  if(allowedIps.includes(requestIp!)) {
+  const origin = req.headers.origin
+
+  if(trustedIPs.includes(requestIp!) || allowedOrigins.includes(origin!)) {
+    if(origin) {
+      res.header('Access-Control-Allow-Origin', origin);
+    }
     next()
   } else {
-    res.status(403).json({message: "Forbidden"})
+    res.status(403).json({ message: "Origin not allowed" })
   }
 })
 
