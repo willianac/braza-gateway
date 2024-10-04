@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { withdraw } from "../services/withdraw.js";
 import { js2xml } from "xml-js";
+import { getMerchantByAccountNumber } from "./getMerchantByAccountNumber.js";
+import { getMerchantByAccountId } from "../utils/getMerchantByAccountId.js";
+import { Merchant } from "../types/Merchant.js";
 
 export async function withdrawController(req: Request, res: Response, next: NextFunction) {
   try {
@@ -14,16 +17,21 @@ export async function withdrawController(req: Request, res: Response, next: Next
       Tron_Wallet
     } = req.body
 
+    let merchant: Merchant | undefined;
+    if(!x_Api_key && !x_Application_Id) {
+      merchant = getMerchantByAccountId(x_Account_Number)
+    }
+
     const result = await withdraw({
       credentials: {
         accountNumber: x_Account_Number,
-        apiKey: x_Api_key,
-        applicationId: x_Application_Id
+        apiKey: x_Api_key || merchant?.api_Key,
+        applicationId: x_Application_Id || merchant?.application_id
       },
       amount: Amount,
       coin: Coin_Name,
       blockchain: Blockchain,
-      wallet: Tron_Wallet
+      wallet: Tron_Wallet || merchant?.wallet
     })
     if("detail" in result) throw new Error(JSON.stringify(result))
     res.status(200).send(result.message)
