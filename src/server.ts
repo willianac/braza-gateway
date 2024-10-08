@@ -88,10 +88,10 @@ app.post("/webhook/:id", (req, res) => {
 
 app.post("/big/pix", async (req, res) => {
   try {
-    const { amount, socketSessionId, accountId } = req.body
+    const { amount, socketSessionId, accountId, clientCode } = req.body
     const transactionId = uuidv4()
     transactionIdMapping.set(socketSessionId, transactionId)
-    const merchant = getMerchantByAccountId(accountId)
+    const merchant = getMerchantByAccountId(accountId, clientCode)
     if(!merchant) return res.status(204).send("não encontramos nenhuma conta com este id")
     
     const result = await sendTransaction(amount, transactionId, {
@@ -116,8 +116,8 @@ app.post("/big/pix", async (req, res) => {
 })
 
 app.get("/quotation", quotationController)
-app.get("/merchants/:accNumber", getMerchantByAccountNumber)
-app.get("/transactions/:accNumber", getTransactionsByAccountNumberController)
+app.get("/merchants/", getMerchantByAccountNumber)
+app.get("/transactions/", getTransactionsByAccountNumberController)
 
 app.post("/daily-transactions", getTransactionsController)
 app.post("/catch-xfee", catchXpressoFeeController)

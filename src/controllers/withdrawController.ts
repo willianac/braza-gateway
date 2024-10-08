@@ -13,12 +13,13 @@ export async function withdrawController(req: Request, res: Response, next: Next
       Coin_Name,
       Amount,
       Blockchain,
-      Tron_Wallet
+      Tron_Wallet,
+      clientCode
     } = req.body
 
     let merchant: Merchant | undefined;
     if(!x_Api_key && !x_Application_Id) {
-      merchant = getMerchantByAccountId(x_Account_Number)
+      merchant = getMerchantByAccountId(x_Account_Number, clientCode)
     }
 
     const result = await withdraw({
