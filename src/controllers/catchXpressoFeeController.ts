@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express";
-import merchantsConfig from "../../config/EC.json"
 import { doInternalTransfer } from "../services/doInternalTransfer.js";
+import { getMerchantByAccountId } from "../utils/getMerchantByAccountId.js";
 
 export async function catchXpressoFeeController(req: Request, res: Response, next: NextFunction) {
   try {
-    const { senderAccount, xFeeAccount, amount } = req.body
-    const merchant = merchantsConfig.merchants.find(merch => merch.account_number === senderAccount)
+    const { senderAccount, xFeeAccount, amount, clientCode } = req.body
+    const merchant = getMerchantByAccountId(senderAccount, clientCode)
     if(!merchant) throw new Error("sender account-id not found")
     
     const result = await doInternalTransfer({

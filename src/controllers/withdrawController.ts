@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { withdraw } from "../services/withdraw.js";
 import { js2xml } from "xml-js";
-import { getMerchantByAccountNumber } from "./getMerchantByAccountNumber.js";
 import { getMerchantByAccountId } from "../utils/getMerchantByAccountId.js";
 import { Merchant } from "../types/Merchant.js";
 
@@ -14,12 +13,13 @@ export async function withdrawController(req: Request, res: Response, next: Next
       Coin_Name,
       Amount,
       Blockchain,
-      Tron_Wallet
+      Tron_Wallet,
+      clientCode
     } = req.body
 
     let merchant: Merchant | undefined;
     if(!x_Api_key && !x_Application_Id) {
-      merchant = getMerchantByAccountId(x_Account_Number)
+      merchant = getMerchantByAccountId(x_Account_Number, clientCode)
     }
 
     const result = await withdraw({
