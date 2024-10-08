@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { withdraw } from "../services/withdraw.js";
 import { js2xml } from "xml-js";
-import { getMerchantByAccountNumber } from "./getMerchantByAccountNumber.js";
 import { getMerchantByAccountId } from "../utils/getMerchantByAccountId.js";
 import { Merchant } from "../types/Merchant.js";
 

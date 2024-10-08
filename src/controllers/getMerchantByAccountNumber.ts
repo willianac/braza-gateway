@@ -15,7 +15,7 @@ export async function getMerchantByAccountNumber(req: Request, res: Response, ne
   const merchant = merchantList.find(merch => merch.account_number === accNumber)
   
   if(merchant) {
-    const { api_Key, application_id, account_number, wallet, ...merchantWithoutKeys } = merchant
+    const { api_Key, application_id, account_number, ...merchantWithoutKeys } = merchant
     return res.status(200).json(merchantWithoutKeys)
   }
   res.status(204).send()
