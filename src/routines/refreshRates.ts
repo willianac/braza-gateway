@@ -24,8 +24,32 @@ async function refreshRates() {
     }
   }
 
-  const fileName = generateRefreshFile("ECTPFX", ...fileData);
-  await uploadFile(fileName, "Rates")
+  //sobe no 'Checkout'
+  let fileName = generateRefreshFile("ECTPFX", ...fileData);
+  await uploadFile(
+    fileName,
+    process.env.FTP_USER_1 as string,
+    process.env.FTP_PASS_1 as string,
+    "Rates"
+  )
+
+  //sobe no 'Absolute'
+  await uploadFile(
+    fileName,
+    process.env.FTP_USER_2 as string,
+    process.env.FTP_PASS_2 as string,
+    "Rates"
+  )
+  fs.rm(fileName + ".txt", err => {if(err) console.log(err)})
+
+  //sobe no 'Mittere'
+  fileName = generateRefreshFile("MTRPFX", ...fileData);
+  await uploadFile(
+    fileName,
+    process.env.FTP_USER_3 as string,
+    process.env.FTP_PASS_3 as string,
+    "Rates"
+  )
   fs.rm(fileName + ".txt", err => {if(err) console.log(err)})
 }
 
