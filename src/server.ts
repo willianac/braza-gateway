@@ -25,7 +25,7 @@ app.use(cors())
 
 app.set("trust proxy", true)
 
-const trustedIPs = ["::ffff:192.168.151.10"]
+const trustedIPs = ["::ffff:192.168.151.10", "3.136.164.32"]
 const allowedOrigins = ["https://checkout.moneytransmittersystem.com", "https://mittere.moneytransmittersystem.com", "http://localhost:4200"]
 app.use((req, res, next) => {
   const requestIp = req.ip

@@ -7,8 +7,9 @@ export async function sendTransaction(
   transactionId: string,
   credentials: Credentials
 ): Promise<{ message: string } | RequestError> {
+  const callback = process.env.PRODUCTION === "true" ? "https://api.moneytransfersystem.com/v1/webhook/" : "https://api.moneytransfersystem.com/v2/webhook/"
   const bodyData = {
-    url_callback: "https://api.moneytransfersystem.com/webhook/" + transactionId,
+    url_callback: callback + transactionId,
     markup_type: "P",
     markup_value: "0",
     pair: "USDTBRL",
