@@ -25,21 +25,27 @@ app.use(cors())
 
 app.set("trust proxy", true)
 
-const trustedIPs = ["::ffff:192.168.151.10", "3.136.164.32"]
-const allowedOrigins = ["https://checkout.moneytransmittersystem.com", "https://mittere.moneytransmittersystem.com", "http://localhost:4200"]
-app.use((req, res, next) => {
-  const requestIp = req.ip
-  const origin = req.headers.origin
+if(process.env.PRODUCTION === "false") {
+  const trustedIPs = ["::ffff:192.168.151.10", "3.136.164.32"]
+  const allowedOrigins = ["https://checkout.moneytransmittersystem.com", "https://mittere.moneytransmittersystem.com", "http://localhost:4200"]
+  app.use((req, res, next) => {
+    const requestIp = req.ip
+    const origin = req.headers.origin
 
-  if(trustedIPs.includes(requestIp!) || allowedOrigins.includes(origin!)) {
-    if(origin) {
-      res.header('Access-Control-Allow-Origin', origin);
+    if(req.path === "/v1/webhook/") {
+      return next()
     }
-    next()
-  } else {
-    res.status(403).json({ message: "Origin not allowed" })
-  }
-})
+
+    if(trustedIPs.includes(requestIp!) || allowedOrigins.includes(origin!)) {
+      if(origin) {
+        res.header('Access-Control-Allow-Origin', origin);
+      }
+      next()
+    } else {
+      res.status(403).json({ message: "Origin not allowed" })
+    }
+  })
+}
 
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
