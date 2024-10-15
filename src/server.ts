@@ -137,7 +137,8 @@ app.get("/", (req, res) => {
   res.status(200).send("api accessible")
 })
 
-httpServer.listen(3002);
+const PORT = process.env.PRODUCTION === "false" ? 3003 : 3002
+httpServer.listen(PORT);
 
 function errorHandler(err: Error, req: Request, res: Response, next: NextFunction) {
   res.status(500).send(err.message || "Unexpected server error")
