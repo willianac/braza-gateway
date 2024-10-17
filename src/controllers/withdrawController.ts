@@ -34,7 +34,7 @@ export async function withdrawController(req: Request, res: Response, next: Next
       wallet: Tron_Wallet || merchant?.wallet
     })
     if("detail" in result) throw new Error(JSON.stringify(result))
-    res.status(200).send(result.message)
+    res.status(200).json({message: result.message})
   } catch (error) {
     if(error instanceof Error) {
       //testando enviar como resposta para o xpresso erro com status 200.
