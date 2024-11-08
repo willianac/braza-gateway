@@ -4,25 +4,22 @@ import { generateRefreshFile } from "../utils/generateRefreshFile.js";
 import { uploadFile } from "../utils/uploadFile.js";
 import { getQuotation } from "../services/getQuotation.js";
 
-const MARKUP_VALUES = [process.env.DEFAULT_MARKUP_VALUE as string ?? "0"]
+const MARKUP_VALUE = "0"
 
 async function refreshRates() {
   let fileData: string[][] = [];
-  for(let value of MARKUP_VALUES) {
-    const params = new URLSearchParams({
-      markup_type: "P",
-      markup_value: value,
-      pair: "USDTBRL"
-    })
+  const params = new URLSearchParams({
+    markup_type: "P",
+    markup_value: MARKUP_VALUE,
+    pair: "USDTBRL"
+  })
 
-    const result = await getQuotation(params)
-    if("quotation" in result) {
-      fileData.push(["USD", "BRL", result.quotation.toFixed(2)])
-    } else {
-      console.log(result)
-      console.log(result.detail[0])
-      break
-    }
+  const result = await getQuotation(params)
+  if("quotation" in result) {
+    fileData.push(["USD", "BRL", result.quotation.toFixed(2)])
+  } else {
+    console.log("Não foi possivel pegar o cambio getBraza")
+    console.log(result.detail[0])
   }
 
   let fileName = generateRefreshFile("ECTPFX", ...fileData);
