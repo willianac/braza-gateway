@@ -17,6 +17,10 @@ export async function getTransactionsByAccountNumberController(req: Request, res
       apiKey: merchant.api_Key,
       applicationId: merchant.application_id
     })
+
+    const filteredByStatus = result.transactions.filter(transaction => transaction.status === "paid")
+    result.transactions = filteredByStatus
+    
     res.status(200).json(result);
   } catch (error) {
     next(error)
