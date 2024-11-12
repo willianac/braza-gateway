@@ -2,6 +2,7 @@ import fetch, { Headers } from "node-fetch";
 import { RequestError } from "../types/BrazaRequestError.js";
 import { Credentials } from "../types/GetBrazaAccountCredentials.js";
 
+let incrementator = 0
 export async function getBalance(credentials: Credentials): Promise<string | RequestError> {
   const headers = new Headers()
   headers.append("x-api-key", credentials.apiKey)
@@ -11,7 +12,7 @@ export async function getBalance(credentials: Credentials): Promise<string | Req
 
   const params = new URLSearchParams({
     markup_type: "P",
-    markup_value: "0",
+    markup_value: incrementator.toString(),
     pair: "USDTBRL"
   })
 
@@ -25,6 +26,7 @@ export async function getBalance(credentials: Credentials): Promise<string | Req
     return errorData
   }
 
+  incrementator++
   const data = res.headers.get("x-balance") as string
   return data
 }
