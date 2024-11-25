@@ -82,7 +82,7 @@ async function refreshRates() {
       const currencyPairKey = currency.replace("-", "")
       const pair = currency.split("-")
       const reducedRate = reduceRateByPercentageOf(0.7, parseFloat(quotation[currencyPairKey].bid))
-      fileData.push([pair[0], pair[1], reducedRate.toFixed(3)])
+      fileData.push([pair[0], "BRX", reducedRate.toFixed(3)])
       fileName = generateRefreshFile("MTAGPFX", ...fileData)
       await uploadToMittereRemittance(fileName)
     }
