@@ -24,14 +24,14 @@ async function fetchGetBrazaQuotation(): Promise<GetBrazaQuotationSuccessRespons
 }
 
 async function refreshRates() {
-  const getQuotationResponse = await fetchGetBrazaQuotation()
+  // const getQuotationResponse = await fetchGetBrazaQuotation()
 
-  if(!getQuotationResponse) return
+  // if(!getQuotationResponse) return
 
-  const fileData: string[][] = []
-  fileData.push(["USD", "BRL", getQuotationResponse.quotation.toFixed(2)])
+   let fileData: string[][] = []
+  // fileData.push(["USD", "BRL", getQuotationResponse.quotation.toFixed(2)])
 
-  let fileName: string = "";
+   let fileName: string = "";
 
   if(process.env.PRODUCTION === "false") {
     fileName = generateRefreshFile("ECTPFX", ...fileData);
@@ -70,6 +70,22 @@ async function refreshRates() {
     }
     fileName = generateRefreshFile("MTRPFX", ...fileData)
     await uploadToMittere(fileName)
+
+    //Sobe no remittance da Mittere AG
+    fileData = []
+
+    const currency = "CHF-BRL"
+    const quotation = await getAwesomeQuotation(currency)
+    if("status" in quotation) {
+      console.log(quotation)
+    } else {
+      const currencyPairKey = currency.replace("-", "")
+      const pair = currency.split("-")
+      const reducedRate = reduceRateByPercentageOf(0.7, parseFloat(quotation[currencyPairKey].bid))
+      fileData.push([pair[0], pair[1], reducedRate.toFixed(3)])
+      fileName = generateRefreshFile("MTAGPFX", ...fileData)
+      await uploadToMittereRemittance(fileName)
+    }
   }
   fs.rm(fileName + ".txt", err => {if(err) console.log(err)})
 }
@@ -97,6 +113,15 @@ async function uploadToMittere(fileName: string) {
     fileName,
     process.env.FTP_USER_3 as string,
     process.env.FTP_PASS_3 as string,
+    "Rates"
+  )
+}
+
+async function uploadToMittereRemittance(fileName: string) {
+  await uploadFile(
+    fileName,
+    process.env.FTP_USER_4 as string,
+    process.env.FTP_PASS_4 as string,
     "Rates"
   )
 }
