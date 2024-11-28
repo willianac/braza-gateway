@@ -17,6 +17,8 @@ export async function withdrawController(req: Request, res: Response, next: Next
       clientCode
     } = req.body
 
+    if(!x_Account_Number || !Amount) return res.status(400).send("missing required parameters")
+
     let merchant: Merchant | undefined;
     if(!x_Api_key && !x_Application_Id) {
       merchant = getMerchantByAccountId(x_Account_Number, clientCode)
