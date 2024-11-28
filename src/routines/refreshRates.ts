@@ -24,14 +24,14 @@ async function fetchGetBrazaQuotation(): Promise<GetBrazaQuotationSuccessRespons
 }
 
 async function refreshRates() {
-  // const getQuotationResponse = await fetchGetBrazaQuotation()
+  const getQuotationResponse = await fetchGetBrazaQuotation()
 
-  // if(!getQuotationResponse) return
+  if(!getQuotationResponse) return
 
-   let fileData: string[][] = []
-  // fileData.push(["USD", "BRL", getQuotationResponse.quotation.toFixed(2)])
+  let fileData: string[][] = []
+  fileData.push(["USD", "BRL", getQuotationResponse.quotation.toFixed(2)])
 
-   let fileName: string = "";
+  let fileName: string = "";
 
   if(process.env.PRODUCTION === "false") {
     fileName = generateRefreshFile("ECTPFX", ...fileData);
