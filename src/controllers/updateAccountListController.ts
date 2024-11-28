@@ -12,7 +12,7 @@ export async function updateAccountListController(req: Request, res: Response, n
     try {
       const configPath = resolve(__dirname, `../config/${LicenseCode}.json`);
       
-      writeFileSync(configPath, JSON.stringify(AccountList)); // Convert AccountList to JSON if it's an object
+      writeFileSync(configPath, AccountList); // Convert AccountList to JSON if it's an object
       return res.status(200).send();
     } catch (error) {
       console.log(error)
