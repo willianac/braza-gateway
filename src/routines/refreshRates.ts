@@ -134,4 +134,4 @@ refreshRates();
 
 setInterval(() => {
 	refreshRates()
-}, 1000 * 60 * 2.5);
+}, 1000 * 60 * 10);
