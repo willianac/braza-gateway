@@ -15,7 +15,7 @@ export async function internalTransferController(req: Request, res: Response, ne
       clientCode
     } = req.body
 
-    if(!x_Account_Number || !Destination_Account || Amount) return res.status(400).send("missing required parameters")
+    if(!x_Account_Number || !Destination_Account || !Amount) return res.status(400).send("missing required parameters")
 
     let merchant: Merchant | undefined;
 
@@ -34,16 +34,11 @@ export async function internalTransferController(req: Request, res: Response, ne
       parseFloat(Amount)
     )
     if("message" in result) {
-      res.status(200).send("success")
+      res.status(200).json({ message: "success" })
     } else {
       throw new Error(JSON.stringify(result))
     }
   } catch (error) {
-    if(error instanceof Error) {
-      //testando enviar como resposta para o xpresso erro com status 200.
-      const xmlErr = js2xml(JSON.parse(error.message), { compact: true, ignoreComment: true })
-      return res.status(500).send(xmlErr)
-    }
     next(error)
   }
 }
