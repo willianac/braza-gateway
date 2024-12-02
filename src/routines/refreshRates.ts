@@ -25,7 +25,7 @@ async function fetchGetBrazaQuotation(): Promise<GetBrazaQuotationSuccessRespons
 
 async function refreshRates() {
   const getQuotationResponse = await fetchGetBrazaQuotation()
-
+  console.log(getQuotationResponse)
   if(!getQuotationResponse) return
 
   let fileData: string[][] = []
@@ -52,7 +52,11 @@ async function refreshRates() {
       await uploadToCheckout(fileName)
     }
   } else {
-    //Mittere
+    //Mittere e Travel Agent
+
+    fileName = generateRefreshFile("PCTRPFX", ...fileData)
+    await uploadToTravelAgent(fileName)
+    fs.rm(fileName + ".txt", err => {if(err) console.log(err)})
 
     const extraCurrencies = ["USD-CHF", "USD-EUR", "USD-GBP"]
     for(let currency of extraCurrencies) {
@@ -122,6 +126,15 @@ async function uploadToMittereRemittance(fileName: string) {
     fileName,
     process.env.FTP_USER_4 as string,
     process.env.FTP_PASS_4 as string,
+    "Rates"
+  )
+}
+
+async function uploadToTravelAgent(fileName: string) {
+  await uploadFile(
+    fileName,
+    process.env.FTP_USER_5 as string,
+    process.env.FTP_PASS_5 as string,
     "Rates"
   )
 }
