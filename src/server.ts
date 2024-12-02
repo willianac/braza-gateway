@@ -30,7 +30,7 @@ if(process.env.PRODUCTION === "true") {
   const allowedOrigins = [
     "https://checkout.moneytransmittersystem.com", 
     "https://mittere.moneytransmittersystem.com", 
-    "https://pix.travelagentsystems.com/#/auth",
+    "https://pix.travelagentsystems.com",
     "http://localhost:4200"
   ]
   app.use((req, res, next) => {
