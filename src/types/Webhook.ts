@@ -21,8 +21,19 @@ type WithdrawStatus = {
   time: string
 }
 
-export type WebHookResponse = {
-  action: string
-  method: "pix_code" | "pix_update" | "transaction_create"
-  data: PixData | PixStatus | WithdrawStatus
-}
+export type WebHookResponse =
+  | {
+      action: string;
+      method: "pix_code";
+      data: PixData;
+    }
+  | {
+      action: string;
+      method: "pix_update";
+      data: PixStatus;
+    }
+  | {
+      action: string;
+      method: "transaction_create";
+      data: WithdrawStatus;
+    };
