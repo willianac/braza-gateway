@@ -17,6 +17,8 @@ import { withdrawController } from "./controllers/withdrawController.js";
 import { internalTransferController } from "./controllers/internalTransferController.js";
 import { getBalanceController } from "./controllers/getBalanceController.js";
 import { getTransactionsByAccountNumberController } from "./controllers/getTransactionsByAccountNumberController.js";
+import { CreateXpressoInvoicePayload } from "./types/CreateXpressoInvoicePayload.js";
+import { createXpressoInvoice } from "./services/createInvoice.js";
 
 const app = express();
 app.use(express.json())
@@ -60,22 +62,22 @@ const io = new Server(httpServer, {
 });
 
 type SocketSessionId = string
-type TransactionId = string
-const transactionIdMapping = new Map<SocketSessionId, TransactionId>()
+type Transaction = CreateXpressoInvoicePayload & { transactionId: string }
+const transactionMapping = new Map<SocketSessionId, Transaction>()
 
 io.on("connection", (socket) => {
   console.log("CONECTADO")
 
   socket.on("disconnect", () => {
-    transactionIdMapping.delete(socket.id)
+    transactionMapping.delete(socket.id)
     console.log("desconectado: " + socket.id)
   })
   
 });
 
-app.post("/webhook/:id", (req, res) => {
+app.post("/webhook/:id", async (req, res) => {
   const webhookData = req.body as WebHookResponse
-  const transactionId = req.params.id
+  const webhookId = req.params.id
 
   if(webhookData.method === "transaction_create") {
     res.status(200).send()
@@ -85,27 +87,34 @@ app.post("/webhook/:id", (req, res) => {
 
   let clientSession = ""
 
-  for(let [key, val] of transactionIdMapping.entries()) {
-    if(val === transactionId) {
+  for(let [key, val] of transactionMapping.entries()) {
+    if(val.transactionId === webhookId) {
       clientSession = key
       break
     }
   }
   console.log("RECEBEU NO WEBHOOK:")
   console.log(webhookData)
+  if(webhookData.method === "pix_update" && webhookData.data.content.status === "paid") {
+    const payload = transactionMapping.get(clientSession)
+    payload ? createXpressoInvoice(payload) : console.log("NÃO FOI POSSIVEL CRIAR UM INVOICE, CLIENT SESSION NÃO EXISTE")
+  }
   io.to(clientSession).emit("response", webhookData)
   res.status(200).send("success")
 })
 
 app.post("/big/pix", async (req, res) => {
   try {
-    const { amount, socketSessionId, accountId, clientCode } = req.body
-    const transactionId = uuidv4()
-    transactionIdMapping.set(socketSessionId, transactionId)
+    const { amount, socketSessionId, accountId, clientCode, xpressoPayload } = req.body
+    const transaction = {
+      ...xpressoPayload as CreateXpressoInvoicePayload,
+      transactionId: uuidv4()
+    }
+    transactionMapping.set(socketSessionId, transaction)
     const merchant = getMerchantByAccountId(accountId, clientCode)
     if(!merchant) return res.status(204).send("não encontramos nenhuma conta com este id")
     
-    const result = await sendTransaction(amount, transactionId, {
+    const result = await sendTransaction(amount, transaction.transactionId, {
       accountNumber: merchant.account_number,
       apiKey: merchant.api_Key,
       applicationId: merchant.application_id
