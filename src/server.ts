@@ -97,7 +97,12 @@ app.post("/webhook/:id", async (req, res) => {
   console.log(webhookData)
   if(webhookData.method === "pix_update" && webhookData.data.content.status === "paid") {
     const payload = transactionMapping.get(clientSession)
-    payload ? createXpressoInvoice(payload) : console.log("NÃO FOI POSSIVEL CRIAR UM INVOICE, CLIENT SESSION NÃO EXISTE")
+    if(payload) {
+      payload.SenderPaymentId = webhookData.data.content.paymentId.toString()
+      createXpressoInvoice(payload)
+    } else {
+      console.log("NÃO FOI POSSIVEL CRIAR UM INVOICE, CLIENT SESSION NÃO EXISTE")
+    }
   }
   io.to(clientSession).emit("response", webhookData)
   res.status(200).send("success")
