@@ -1,13 +1,13 @@
 export type CreateXpressoInvoicePayload = {
-  sessionKey: string
-  receiverId: string
-  accountId: string
-  amount: string
-  nacional: string
-  purposeId: string
-  language: string
-  payorId: string
-  paymentId: string
-  geolocation: string
+  SessionKey: string
+  ReceiverID: string
+  AcctID: string
+  Amount: string
+  Nacional: string
+  PayorServId: string
+  lang: string
+  PayorID: string
+  SenderPaymentId: string
+  Geolocation: string
   endpoint: string
 }
