@@ -14,6 +14,8 @@ export async function createXpressoInvoice(payload: CreateXpressoInvoicePayload)
   const { endpoint, ...payloadWithoutEndpoint } = payload
 
   const FULL_URL = makeUrl(BASE_URL, payloadWithoutEndpoint)
+  console.log("Url do post final:")
+  console.log(FULL_URL)
 
   const res = await fetch(FULL_URL, {
     method: "GET"

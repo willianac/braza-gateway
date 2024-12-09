@@ -20,7 +20,7 @@ export async function getDailyTransaction(credentials: Credentials) {
   })
 
   if(!res.ok) {
-    console.log(res)
+    console.log("nao foi possivel capturar o saldo da conta: " + credentials.accountNumber)
     if(res.status === 504) {
       throw new Error("Gateway Timeout. GetBraza took too long to respond");
     }
