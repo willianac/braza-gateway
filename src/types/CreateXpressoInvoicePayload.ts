@@ -10,4 +10,5 @@ export type CreateXpressoInvoicePayload = {
   SenderPaymentId: string
   Geolocation: string
   endpoint: string
+  transactionId?: string
 }

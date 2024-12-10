@@ -1,4 +1,4 @@
-import { CreateXpressoInvoicePayload } from "../types/CreateXpressoInvoicePayload";
+import { CreateXpressoInvoicePayload } from "../types/CreateXpressoInvoicePayload.js";
 import fetch, { Headers } from "node-fetch";
 
 function makeUrl(baseUrl: string, data: Record<string, string | number | boolean>) {
@@ -11,7 +11,7 @@ function makeUrl(baseUrl: string, data: Record<string, string | number | boolean
 
 export async function createXpressoInvoice(payload: CreateXpressoInvoicePayload) {
   const BASE_URL = `https://api.moneytransmittersystem.com/mts/${payload.endpoint}/mobileApp/xpappstart.cfm/`
-  const { endpoint, ...payloadWithoutEndpoint } = payload
+  const { endpoint, transactionId, ...payloadWithoutEndpoint } = payload
 
   const FULL_URL = makeUrl(BASE_URL, payloadWithoutEndpoint)
   console.log("Url do post final:")
