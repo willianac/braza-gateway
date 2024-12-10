@@ -8,10 +8,8 @@ type PixData = {
 
 type PixStatus = {
   type: string | null
-  content: {
-    paymentId: number
-    status: string
-  }
+  paymentId: number
+  status: string
 }
 
 type WithdrawStatus = {
