@@ -24,10 +24,10 @@ export const brazaWebhookController = (io: Server) => async (req: Request, res: 
   }
   console.log("RECEBEU NO WEBHOOK:")
   console.log(webhookData)
-  if(webhookData.method === "pix_update" && webhookData.data.content.status === "paid") {
+  if(webhookData.method === "pix_update" && webhookData.data.status === "paid") {
     const payload = transactionMapping.get(clientSession)
     if(payload) {
-      payload.SenderPaymentId = webhookData.data.content.paymentId.toString()
+      payload.SenderPaymentId = webhookData.data.paymentId.toString()
       createXpressoInvoice(payload)
     } else {
       console.log("NÃO FOI POSSIVEL CRIAR UM INVOICE, CLIENT SESSION NÃO EXISTE")
