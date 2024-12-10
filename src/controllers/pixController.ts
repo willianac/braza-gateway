@@ -8,13 +8,14 @@ import { sendTransaction } from "../services/sendTransaction.js";
 
 export async function pixController(req: Request, res: Response, next: NextFunction) {
   try {
-    const { amount, socketSessionId, accountId, clientCode, xpressoPayload } = req.body
+    const { amount, socketSessionId, accountId, xpressoPayload } = req.body
+    const xpresso = xpressoPayload as CreateXpressoInvoicePayload
     const transaction = {
-      ...xpressoPayload as CreateXpressoInvoicePayload,
+      ...xpressoPayload,
       transactionId: uuidv4()
     }
     transactionMapping.set(socketSessionId, transaction)
-    const merchant = getMerchantByAccountId(accountId, clientCode)
+    const merchant = getMerchantByAccountId(accountId, xpresso.endpoint)
     if(!merchant) return res.status(204).send("não encontramos nenhuma conta com este id")
     
     const result = await sendTransaction(amount, transaction.transactionId, {
