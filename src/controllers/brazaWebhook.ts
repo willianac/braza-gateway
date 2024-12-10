@@ -46,6 +46,8 @@ async function concludeTransaction(xpressoPayload: CreateXpressoInvoicePayload, 
   const merchant = getMerchantByAccountId(xpressoPayload.brazaAccountNum, xpressoPayload.endpoint)
   if(!merchant) return console.log("NÃO FOI POSSIVEL FAZER O XFEE TRANSFER, MERCHANT ACCOUNT NAO EXISTE")
 
+  if(xpressoPayload.xFeeAmount === 0) return;
+  
   doInternalTransfer({
     accountNumber: merchant.account_number,
     apiKey: merchant.api_Key,
